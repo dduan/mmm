@@ -71,7 +71,7 @@ fn main() {
         }
     }
 
-    utils::log("No action chose. Bye!\n");
+    utils::log("No action chosen. Bye!\n");
 
     // if path exist:
     //   [E]dit | [O]pen | [M]ove... | [D]elete... | [S]tage | [U]nstage | [I]nfo
