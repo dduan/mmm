@@ -13,6 +13,7 @@ impl Command for OpenCommand {
 
     #[allow(unused_variables)]
     fn execute(&self, path: &String, followup_input: Option<String>) -> bool {
-        return open::that(path).is_ok();
+        let result = open::that(path);
+        return result.is_ok() && result.unwrap().success();
     }
 }
