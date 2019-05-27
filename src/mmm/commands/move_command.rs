@@ -30,6 +30,18 @@ impl Command for MoveCommand {
             utils::elog("You didn't provide a destination ¯\\_(ツ)_/¯\n");
         }
 
-        return fs::rename(path, destination).is_ok();
+        let dest_path = Path::new(&destination);
+        match dest_path.parent() {
+            None => false,
+            Some(parent_path) => {
+                if !parent_path.exists() {
+                    utils::elog(format!("I can't move it to {}\n", parent_path.to_str().unwrap()));
+                    utils::elog("that place doesn't exist yet!\n");
+                    false
+                } else {
+                    fs::rename(path, destination).is_ok()
+                }
+            }
+        }
     }
 }
