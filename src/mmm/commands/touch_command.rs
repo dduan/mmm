@@ -30,7 +30,7 @@ impl Command for TouchCommand {
         match dest_path.parent() {
             None => false,
             Some(parent_path) => {
-                if !parent_path.exists() {
+                if !parent_path.to_str().unwrap().is_empty() && !parent_path.exists() {
                     utils::elog(format!(
                         "I can't create file at {}, that place doesn't exist yet!\n",
                         parent_path.to_str().unwrap()));
