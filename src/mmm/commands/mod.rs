@@ -1,6 +1,7 @@
 mod copy_command;
 mod delete_command;
 mod edit_command;
+mod mkdir_command;
 mod move_command;
 mod open_command;
 mod touch_command;
@@ -15,5 +16,6 @@ pub fn all_commands() -> Vec<Box<Command>> {
         Box::new(copy_command::CopyCommand {}),
         Box::new(delete_command::DeleteCommand {}),
         Box::new(touch_command::TouchCommand {}),
+        Box::new(mkdir_command::MkdirCommand {}),
     ]
 }
