@@ -78,7 +78,7 @@ fn main() {
 
                 utils::slog(format!("That took {}.{}s", exe_duration.as_secs(), exe_duration.subsec_millis()));
             } else {
-                utils::elog("Something went wrong :(\n");
+                utils::elog(":(\n");
             }
 
             return
