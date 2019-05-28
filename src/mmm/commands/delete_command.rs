@@ -35,6 +35,8 @@ impl Command for DeleteCommand {
     fn should_show_if_path_exists_not(&self) -> bool { false }
 
     fn need_followup(&self) -> bool { true }
+
+    #[allow(unused_variables)]
     fn followup_prompt(&self, path: &String) -> String {
         format!("Are you {}? (y/N) ", utils::color_text("sure", color::Red))
     }

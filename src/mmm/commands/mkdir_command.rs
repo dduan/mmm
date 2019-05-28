@@ -1,5 +1,4 @@
 use crate::mmm::Command;
-use crate::mmm::utils;
 use std::fs;
 use std::path::Path;
 
@@ -15,6 +14,7 @@ impl Command for MkdirCommand {
     fn should_show_if_path_exists(&self) -> bool { false }
     fn should_show_if_path_exists_not(&self) -> bool { true }
 
+    #[allow(unused_variables)]
     fn execute(&self, path: &String, followup_input: Option<String>) -> bool {
         let dest_path = Path::new(&path);
         if dest_path.exists() { // This shouldn't happen
