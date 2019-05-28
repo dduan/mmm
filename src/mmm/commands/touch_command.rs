@@ -17,6 +17,11 @@ impl Command for TouchCommand {
 
     #[allow(unused_variables)]
     fn execute(&self, path: &String, followup_input: Option<String>) -> bool {
+        if path.is_empty() {
+            utils::elog("No file name?\n");
+            return false;
+        }
+
         let dest_path = Path::new(&path);
         if dest_path.exists() { // This shouldn't happen
             return true;
