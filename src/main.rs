@@ -91,14 +91,4 @@ fn main() {
     //   [E]dit | [O]pen | [M]ove... | [C]opy... | [D]elete... | [S]tage | [U]nstage | [I]nfo
     // else:
     //   [E]dit | [T]ouch | Ma[k]e Directory
-
-    // Move
-    // Moving PATH
-    // Enter destination: _
-    // Done.
-
-    // Delete
-    // Deleting PATH
-    // Confirm (y/N): _
-    // Done.
 }
