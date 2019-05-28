@@ -11,7 +11,6 @@ impl Command for EditCommand {
     fn exe_msg(&self, path: &String) -> Option<String> { Some(format!("{} {}\n", "Editing", path)) }
 
     #[allow(unused_variables)]
-    fn should_show(&self, path: &String) -> bool { true }
 
     #[allow(unused_variables)]
     fn execute(&self, path: &String, followup_input: Option<String>) -> bool {

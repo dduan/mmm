@@ -2,6 +2,7 @@ use getch;
 use std::env;
 use std::io::Write;
 use std::io;
+use std::path::Path;
 use std::time;
 
 mod mmm;
@@ -9,11 +10,11 @@ mod mmm;
 use mmm::Command;
 use mmm::commands;
 use mmm::utils;
+use core::iter::FromIterator;
 
-fn create_initial_menu(commands: &Vec<Box<Command>>, path: &String) -> String {
+fn create_initial_menu(commands: &Vec<Box<Command>>) -> String {
     let initial_text: Vec<String> = commands
         .iter()
-        .filter(|c| c.should_show(&path))
         .map(|c| c.display_text())
         .collect();
 
@@ -28,9 +29,15 @@ fn main() {
     }
 
     let path = &args[1];
-    let commands = commands::all_commands();
+    let path_exists = Path::new(path).exists();
+    let commands = Vec::from_iter(commands::all_commands()
+        .into_iter()
+        .filter(|c| {
+            path_exists && c.should_show_if_path_exists() ||
+                !path_exists && c.should_show_if_path_exists_not()
+        }));
 
-    let initial_menu = create_initial_menu(&commands, path);
+    let initial_menu = create_initial_menu(&commands);
     print!("{}", initial_menu);
     io::stdout().flush().expect("Flushing failed");
 
@@ -74,7 +81,7 @@ fn main() {
     utils::log("No action chosen. Bye!\n");
 
     // if path exist:
-    //   [E]dit | [O]pen | [M]ove... | [D]elete... | [S]tage | [U]nstage | [I]nfo
+    //   [E]dit | [O]pen | [M]ove... | [C]opy... | [D]elete... | [S]tage | [U]nstage | [I]nfo
     // else:
     //   [E]dit | [T]ouch | Ma[k]e Directory
 

@@ -12,7 +12,7 @@ impl Command for MoveCommand {
         Some(format!("{} {}\n", "Moving", path))
     }
 
-    fn should_show(&self, path: &String) -> bool { Path::new(path).exists() }
+    fn should_show_if_path_exists_not(&self) -> bool { false }
 
     #[allow(unused_variables)]
     fn need_followup(&self) -> bool { true }
@@ -35,8 +35,9 @@ impl Command for MoveCommand {
             None => false,
             Some(parent_path) => {
                 if !parent_path.exists() {
-                    utils::elog(format!("I can't move it to {}\n", parent_path.to_str().unwrap()));
-                    utils::elog("that place doesn't exist yet!\n");
+                    utils::elog(format!(
+                        "I can't move it to {}, that place doesn't exist yet!\n",
+                        parent_path.to_str().unwrap()));
                     false
                 } else {
                     fs::rename(path, destination).is_ok()

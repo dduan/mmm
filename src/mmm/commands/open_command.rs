@@ -1,6 +1,5 @@
 use crate::mmm::Command;
 use open;
-use std::path::Path;
 
 pub struct OpenCommand {}
 
@@ -9,7 +8,7 @@ impl Command for OpenCommand {
     fn hotkey_pos(&self) -> usize { 0 }
     fn exe_msg(&self, path: &String) -> Option<String> { Some(format!("{} {}\n", "Opening", path)) }
 
-    fn should_show(&self, path: &String) -> bool { Path::new(path).exists() }
+    fn should_show_if_path_exists_not(&self) -> bool { false }
 
     #[allow(unused_variables)]
     fn execute(&self, path: &String, followup_input: Option<String>) -> bool {

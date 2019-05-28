@@ -16,7 +16,9 @@ pub trait Command {
     #[allow(unused_variables)]
     fn wrapup_msg(&self) -> String { String::from("Done!\n") }
 
-    fn should_show(&self, path: &String) -> bool;
+    fn should_show_if_path_exists(&self) -> bool { true }
+    fn should_show_if_path_exists_not(&self) -> bool { true }
+
     fn execute(&self, path: &String, followup_input: Option<String>) -> bool;
 
     fn display_text(&self) -> String {
