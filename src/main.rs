@@ -1,16 +1,16 @@
+mod mmm;
+
+use core::iter::FromIterator;
 use getch;
+use mmm::Command;
+use mmm::commands;
+use mmm::utils;
 use std::env;
 use std::io::Write;
 use std::io;
 use std::path::Path;
 use std::time;
-
-mod mmm;
-
-use mmm::Command;
-use mmm::commands;
-use mmm::utils;
-use core::iter::FromIterator;
+use termion::color;
 
 fn create_initial_menu(commands: &Vec<Box<Command>>) -> String {
     let initial_text: Vec<String> = commands
@@ -30,6 +30,13 @@ fn main() {
 
     let path = &args[1];
     let path_exists = Path::new(path).exists();
+    if path_exists {
+        utils::log(format!("What would you like to do to {}?\n",
+                            utils::color_text(path, color::Yellow)));
+    } else {
+        utils::log(format!("{} doesn't exists yet, what's next?\n",
+                           utils::color_text(path, color::Yellow)));
+    }
     let commands = Vec::from_iter(commands::all_commands()
         .into_iter()
         .filter(|c| {
@@ -66,10 +73,10 @@ fn main() {
             if command.execute(&path, followup_input) {
                 let exe_duration = start_instant.elapsed();
                 if command.need_wrapup() {
-                    utils::log(command.wrapup_msg());
+                    utils::slog(command.wrapup_msg());
                 }
 
-                utils::log(format!("That took {}.{}s", exe_duration.as_secs(), exe_duration.subsec_millis()));
+                utils::slog(format!("That took {}.{}s", exe_duration.as_secs(), exe_duration.subsec_millis()));
             } else {
                 utils::elog("Something went wrong :(\n");
             }
@@ -78,7 +85,7 @@ fn main() {
         }
     }
 
-    utils::log("No action chosen. Bye!\n");
+    utils::slog("No action chosen. Bye!\n");
 
     // if path exist:
     //   [E]dit | [O]pen | [M]ove... | [C]opy... | [D]elete... | [S]tage | [U]nstage | [I]nfo

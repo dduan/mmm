@@ -15,6 +15,11 @@ pub fn color_text<T:, C>(text: T, text_color: C) -> String
 }
 
 pub fn log<T>(log_text: T) where T: Display {
+    print!("[mmm] {}", log_text);
+    io::stdout().flush().expect("Flushing failed");
+}
+
+pub fn slog<T>(log_text: T) where T: Display {
     let mmm_success = color_text("mmm", color::Green);
     print!("[{}] {}", mmm_success, log_text);
     io::stdout().flush().expect("Flushing failed");
