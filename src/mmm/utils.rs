@@ -26,7 +26,7 @@ pub fn slog<T>(log_text: T) where T: Display {
 }
 
 pub fn elog<T>(log_text: T) where T: Display {
-    let mmm_warning = color_text("mmm", color::Yellow);
+    let mmm_warning = color_text("mmm", color::Red);
     eprint!("[{}] {}", mmm_warning, log_text);
     io::stderr().flush().expect("Flushing failed");
 }
