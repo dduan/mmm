@@ -1,5 +1,6 @@
 mod mmm;
 
+use atty;
 use core::iter::FromIterator;
 use getch;
 use mmm::Command;
@@ -50,7 +51,12 @@ fn main() {
 
     let initial_selection = char::from(getch::Getch::new().getch().unwrap());
 
-    print!("\r{}\r", " ".repeat(initial_menu.len()));
+    let mut color_char_count: usize = 0;
+    if atty::is(atty::Stream::Stdout) {
+        color_char_count = commands.len() * 12
+    }
+
+    print!("\r{}\r", " ".repeat(initial_menu.len() - color_char_count));
     io::stdout().flush().expect("Flushing failed");
 
     for command in commands {
