@@ -36,6 +36,7 @@ impl Command for MoveCommand {
         let destination = String::from(followup_input.unwrap_or(String::from("")).trim_end());
         if destination.is_empty() {
             utils::elog("You didn't provide a destination ¯\\_(ツ)_/¯\n");
+            return false
         }
 
         let dest_path = Path::new(&destination);
