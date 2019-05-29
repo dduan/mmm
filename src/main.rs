@@ -51,12 +51,13 @@ fn main() {
 
     let initial_selection = char::from(getch::Getch::new().getch().unwrap());
 
-    let mut color_char_count: usize = 0;
     if atty::is(atty::Stream::Stdout) {
-        color_char_count = commands.len() * 12
+        // TODO: 9 might not be correct on Windows.
+        print!("\r{}\r", " ".repeat(initial_menu.len() - commands.len() * 9));
+    } else {
+        print!("\n");
     }
 
-    print!("\r{}\r", " ".repeat(initial_menu.len() - color_char_count));
     io::stdout().flush().expect("Flushing failed");
 
     for command in commands {
