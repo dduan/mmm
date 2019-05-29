@@ -52,7 +52,8 @@ fn main() {
     let initial_selection = char::from(getch::Getch::new().getch().unwrap());
 
     if atty::is(atty::Stream::Stdout) {
-        // TODO: 9 might not be correct on Windows.
+        // TODO: 9 might not be correct on Windows. This delta should be calulated by the ui logic
+        // that added colors originally.
         print!("\r{}\r", " ".repeat(initial_menu.len() - commands.len() * 9));
     } else {
         print!("\n");
