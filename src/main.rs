@@ -11,7 +11,7 @@ use std::io::Write;
 use std::io;
 use std::path::Path;
 use std::time;
-use termion::color;
+use colored::Color;
 
 fn create_initial_menu(commands: &Vec<Box<Command>>) -> String {
     let initial_text: Vec<String> = commands
@@ -33,10 +33,10 @@ fn main() {
     let path_exists = Path::new(path).exists();
     if path_exists {
         utils::log(format!("What would you like to do to {}?\n",
-                            utils::color_text(path, color::Yellow)));
+                            utils::color_text(path, Color::Yellow)));
     } else {
         utils::log(format!("{} doesn't exists yet, what's next?\n",
-                           utils::color_text(path, color::Yellow)));
+                           utils::color_text(path, Color::Yellow)));
     }
     let commands = Vec::from_iter(commands::all_commands()
         .into_iter()

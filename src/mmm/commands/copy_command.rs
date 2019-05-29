@@ -3,13 +3,13 @@ use crate::mmm::utils;
 use std::fmt::Display;
 use std::path::Path;
 use std::process;
-use termion::color;
+use colored::Color;
 
 pub struct CopyCommand {}
 
 impl CopyCommand {
     fn log_copy_attempt<T>(&self, msg: T) where T: Display {
-        utils::log(format!("Copying to {}\n", utils::color_text(msg, color::Yellow)));
+        utils::log(format!("Copying to {}\n", utils::color_text(msg, Color::Yellow)));
     }
 
     fn copy(&self, from: String, to: String) -> bool {

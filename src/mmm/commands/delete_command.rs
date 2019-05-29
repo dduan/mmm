@@ -2,7 +2,7 @@ use crate::mmm::Command;
 use crate::mmm::utils;
 use std::path::Path;
 use std::process;
-use termion::color;
+use colored::Color;
 
 pub struct DeleteCommand {}
 
@@ -38,7 +38,7 @@ impl Command for DeleteCommand {
 
     #[allow(unused_variables)]
     fn followup_prompt(&self, path: &String) -> String {
-        format!("Are you {}? (y/N) ", utils::color_text("sure", color::Red))
+        format!("Are you {}? (y/N) ", utils::color_text("sure", Color::Red))
     }
 
     fn need_wrapup(&self) -> bool { false }

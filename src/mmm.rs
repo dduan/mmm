@@ -1,4 +1,4 @@
-use termion::color;
+use colored::Color;
 
 pub mod utils;
 pub mod commands;
@@ -26,7 +26,7 @@ pub trait Command {
         let pos = self.hotkey_pos();
 
         let key_char = name.chars().nth(pos).unwrap();
-        let indicator = format!("[{}]", utils::color_text(key_char, color::Red));
+        let indicator = format!("[{}]", utils::color_text(key_char, Color::Red));
 
         name.replace_range(pos..pos+1, &indicator);
         if self.need_followup() {

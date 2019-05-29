@@ -3,13 +3,13 @@ use std::fmt::Display;
 use crate::mmm::utils;
 use std::fs;
 use std::path::Path;
-use termion::color;
+use colored::Color;
 
 pub struct MoveCommand {}
 
 impl MoveCommand {
     fn log_move_attempt<T>(&self, msg: T) where T: Display {
-        utils::log(format!("Moving to {}\n", utils::color_text(msg, color::Yellow)));
+        utils::log(format!("Moving to {}\n", utils::color_text(msg, Color::Yellow)));
     }
 }
 
