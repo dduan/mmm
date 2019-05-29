@@ -6,6 +6,7 @@ use std::process;
 pub struct EditCommand {}
 
 impl Command for EditCommand {
+    fn new() -> EditCommand { EditCommand {} }
     fn name(&self) -> String { String::from("Edit") }
     fn hotkey_pos(&self) -> usize { 0 }
     fn exe_msg(&self, path: &String) -> Option<String> { Some(format!("{} {}\n", "Editing", path)) }

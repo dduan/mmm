@@ -6,6 +6,7 @@ use std::path::Path;
 pub struct TouchCommand {}
 
 impl Command for TouchCommand {
+    fn new() -> TouchCommand { TouchCommand {} }
     fn name(&self) -> String { String::from("Touch") }
     fn hotkey_pos(&self) -> usize { 0 }
     fn exe_msg(&self, path: &String) -> Option<String> {

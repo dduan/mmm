@@ -5,6 +5,7 @@ use std::path::Path;
 pub struct MkdirCommand {}
 
 impl Command for MkdirCommand {
+    fn new() -> MkdirCommand { MkdirCommand {} }
     fn name(&self) -> String { String::from("Make Directory(s)") }
     fn hotkey_pos(&self) -> usize { 2 }
     fn exe_msg(&self, path: &String) -> Option<String> {

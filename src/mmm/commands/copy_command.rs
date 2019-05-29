@@ -27,6 +27,7 @@ impl CopyCommand {
 }
 
 impl Command for CopyCommand {
+    fn new() -> CopyCommand { CopyCommand {} }
     fn name(&self) -> String { String::from("Copy") }
     fn hotkey_pos(&self) -> usize { 0 }
     fn exe_msg(&self, path: &String) -> Option<String> {

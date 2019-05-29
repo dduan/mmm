@@ -14,6 +14,7 @@ impl MoveCommand {
 }
 
 impl Command for MoveCommand {
+    fn new() -> MoveCommand { MoveCommand {} }
     fn name(&self) -> String { String::from("Move") }
     fn hotkey_pos(&self) -> usize { 0 }
     fn exe_msg(&self, path: &String) -> Option<String> {

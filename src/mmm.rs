@@ -4,10 +4,12 @@ pub mod utils;
 pub mod commands;
 
 pub trait Command {
+    fn new() -> Self where Self: Sized;
+
     fn name(&self) -> String;
     fn hotkey_pos(&self) -> usize;
-    fn exe_msg(&self, path: &String) -> Option<String>;
 
+    fn exe_msg(&self, path: &String) -> Option<String>;
     fn need_followup(&self) -> bool { false }
     #[allow(unused_variables)]
     fn followup_prompt(&self, path: &String) -> String { String::from("") }

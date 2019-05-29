@@ -4,6 +4,7 @@ use open;
 pub struct OpenCommand {}
 
 impl Command for OpenCommand {
+    fn new() -> OpenCommand { OpenCommand {} }
     fn name(&self) -> String { String::from("Open") }
     fn hotkey_pos(&self) -> usize { 0 }
     fn exe_msg(&self, path: &String) -> Option<String> { Some(format!("{} {}\n", "Opening", path)) }
