@@ -1,24 +1,10 @@
 use crate::mmm::Command;
 use crate::mmm::utils;
 use std::path::Path;
-use std::process;
+use std::fs;
 use colored::Color;
 
 pub struct DeleteCommand {}
-
-impl DeleteCommand {
-    fn delete(&self, path: &String) -> bool {
-        let mut editor_command = process::Command::new("rm");
-        editor_command.arg("-rf");
-        editor_command.arg(path);
-        let cp_result = editor_command
-            .spawn()
-            .ok()
-            .expect("couldn't launch rm")
-            .wait();
-        return cp_result.is_ok();
-    }
-}
 
 impl Command for DeleteCommand {
     fn new() -> DeleteCommand { DeleteCommand {} }
@@ -51,7 +37,13 @@ impl Command for DeleteCommand {
             return true
         }
 
-        let result = self.delete(path);
+        let result: bool;
+        if Path::new(path).is_dir() {
+            result = fs::remove_dir_all(path).is_ok()
+        } else {
+            result = fs::remove_file(path).is_ok()
+        }
+
         if result {
             utils::slog("It's gone.\n");
         }
