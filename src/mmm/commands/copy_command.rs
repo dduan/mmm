@@ -2,8 +2,9 @@ use crate::mmm::Command;
 use crate::mmm::utils;
 use std::fmt::Display;
 use std::path::Path;
-use std::process;
 use colored::Color;
+use fs_extra::dir;
+use fs_extra::file;
 
 pub struct CopyCommand {}
 
@@ -13,16 +14,14 @@ impl CopyCommand {
     }
 
     fn copy(&self, from: String, to: String) -> bool {
-        let mut editor_command = process::Command::new("cp");
-        editor_command.arg("-r");
-        editor_command.arg(from);
-        editor_command.arg(to);
-        let cp_result = editor_command
-            .spawn()
-            .ok()
-            .expect("couldn't launch cp")
-            .wait();
-        return cp_result.is_ok();
+        if Path::new(&from).is_dir() {
+            let mut options = dir::CopyOptions::new();
+            options.copy_inside = true;
+            dir::copy(from, to, &options).is_ok()
+        } else {
+            let options = file::CopyOptions::new();
+            file::copy(from, to, &options).is_ok()
+        }
     }
 }
 
