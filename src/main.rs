@@ -94,9 +94,4 @@ fn main() {
     }
 
     utils::slog("No action chosen. Bye!\n");
-
-    // if path exist:
-    //   [E]dit | [O]pen | [M]ove... | [C]opy... | [D]elete... | [S]tage | [U]nstage | [I]nfo
-    // else:
-    //   [E]dit | [T]ouch | Ma[k]e Directory
 }
