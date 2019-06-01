@@ -1,3 +1,3 @@
-# Mutable Manipulation Menu
+# Miniature Menu Manipulator
 
 … this name is subject to change, the initials are not.
