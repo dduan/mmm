@@ -13,13 +13,25 @@ use std::path::Path;
 use std::time;
 use colored::Color;
 
-fn create_initial_menu(commands: &Vec<Box<Command>>) -> String {
-    let initial_text: Vec<String> = commands
+/// Returns content of the menu and the next line to display after an item is selected from the
+/// menu.
+fn create_initial_menu(commands: &Vec<Box<Command>>) -> (String, String) {
+    let display = commands
         .iter()
-        .map(|c| c.display_text())
-        .collect();
+        .map(|c| c.display_text());
 
-    return initial_text.join(" | ")
+    // TODO: can we get away with no clone?
+    let color_text_count: usize = display.clone().map(|t| t.1).sum();
+    let items: Vec<String> = display.map(|t| t.0).collect();
+    let initial_text = items.join(" | ");
+
+    let replace_text: String;
+    if atty::is(atty::Stream::Stdout) {
+        replace_text = format!("\r{}\r", " ".repeat(initial_text.len() - color_text_count));
+    } else {
+        replace_text = format!("\n");
+    }
+    return (initial_text, replace_text)
 }
 
 fn main() {
@@ -45,20 +57,12 @@ fn main() {
                 !path_exists && c.should_show_if_path_exists_not()
         }));
 
-    let initial_menu = create_initial_menu(&commands);
+    let (initial_menu, replacement) = create_initial_menu(&commands);
     print!("{}", initial_menu);
     io::stdout().flush().expect("Flushing failed");
 
     let initial_selection = char::from(getch::Getch::new().getch().unwrap());
-
-    if atty::is(atty::Stream::Stdout) {
-        // TODO: 9 might not be correct on Windows. This delta should be calulated by the ui logic
-        // that added colors originally.
-        print!("\r{}\r", " ".repeat(initial_menu.len() - commands.len() * 9));
-    } else {
-        print!("\n");
-    }
-
+    print!("{}", replacement);
     io::stdout().flush().expect("Flushing failed");
 
     for command in commands {

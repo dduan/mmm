@@ -23,19 +23,20 @@ pub trait Command {
 
     fn execute(&self, path: &String, followup_input: Option<String>) -> bool;
 
-    fn display_text(&self) -> String {
+    fn display_text(&self) -> (String, usize) {
         let mut name = self.name();
         let pos = self.hotkey_pos();
 
         let key_char = name.chars().nth(pos).unwrap();
         let indicator = format!("[{}]", utils::color_text(key_char, Color::Red));
+        let color_text_len = indicator.len() - 3;
 
         name.replace_range(pos..pos+1, &indicator);
         if self.need_followup() {
             name.push('…');
         }
 
-        return name
+        return (name, color_text_len)
     }
 
     fn matches_hotkey(&self, key: char) -> bool {
