@@ -1,9 +1,9 @@
-use crate::mmm::Command;
+use colored::Color;
 use std::fmt::Display;
-use crate::mmm::utils;
 use std::fs;
 use std::path::Path;
-use colored::Color;
+use super::Command;
+use super::utils;
 
 pub struct MoveCommand {}
 

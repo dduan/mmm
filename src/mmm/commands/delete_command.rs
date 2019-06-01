@@ -1,8 +1,8 @@
-use crate::mmm::Command;
-use crate::mmm::utils;
-use std::path::Path;
-use std::fs;
 use colored::Color;
+use std::fs;
+use std::path::Path;
+use super::Command;
+use super::utils;
 
 pub struct DeleteCommand {}
 

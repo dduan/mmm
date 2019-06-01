@@ -1,7 +1,7 @@
-use crate::mmm::Command;
-use std::process;
 use colored::Color;
-use crate::mmm::utils;
+use std::process;
+use super::Command;
+use super::utils;
 
 pub struct GitCommand {
     in_git: bool

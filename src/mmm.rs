@@ -1,46 +1,111 @@
+pub mod commands;
+pub mod utils;
+
+use commands::Command;
+use atty;
+use core::iter::FromIterator;
+use getch;
+use std::io::Write;
+use std::io;
+use std::path::Path;
+use std::time;
 use colored::Color;
 
-pub mod utils;
-pub mod commands;
+/// Returns content of the menu and the next line to display after an item is selected from the
+/// menu.
+fn create_initial_menu(commands: &Vec<Box<Command>>) -> (String, String) {
+    let display = commands
+        .iter()
+        .map(|c| c.display_text());
 
-pub trait Command {
-    fn new() -> Self where Self: Sized;
+    // TODO: can we get away with no clone?
+    let color_text_count: usize = display.clone().map(|t| t.1).sum();
+    let items: Vec<String> = display.map(|t| t.0).collect();
+    let initial_text = items.join(" | ");
 
-    fn name(&self) -> String;
-    fn hotkey_pos(&self) -> usize;
+    let replace_text: String;
+    if atty::is(atty::Stream::Stdout) {
+        replace_text = format!("\r{}\r", " ".repeat(initial_text.len() - color_text_count));
+    } else {
+        replace_text = format!("\n");
+    }
+    return (initial_text, replace_text)
+}
 
-    fn exe_msg(&self, path: &String) -> Option<String>;
-    fn need_followup(&self) -> bool { false }
-    #[allow(unused_variables)]
-    fn followup_prompt(&self, path: &String) -> String { String::from("") }
+fn run_command(command: Box<Command>, path: &String) {
+    let message = command.exe_msg(&path);
+    if message.is_some() {
+        utils::log(message.unwrap());
+    }
 
-    fn need_wrapup(&self) -> bool { true }
-    #[allow(unused_variables)]
-    fn wrapup_msg(&self) -> String { String::from("Done!\n") }
+    let mut followup_input = None;
+    if command.need_followup() {
+        let followup_message = command.followup_prompt(&path);
+        utils::log(followup_message);
+        let mut buf = String::new();
+        io::stdin().read_line(&mut buf).expect("");
+        followup_input = Some(buf);
+    }
 
-    fn should_show_if_path_exists(&self) -> bool { true }
-    fn should_show_if_path_exists_not(&self) -> bool { true }
-
-    fn execute(&self, path: &String, followup_input: Option<String>) -> bool;
-
-    fn display_text(&self) -> (String, usize) {
-        let mut name = self.name();
-        let pos = self.hotkey_pos();
-
-        let key_char = name.chars().nth(pos).unwrap();
-        let indicator = format!("[{}]", utils::color_text(key_char, Color::Red));
-        let color_text_len = indicator.len() - 3;
-
-        name.replace_range(pos..pos+1, &indicator);
-        if self.need_followup() {
-            name.push('…');
+    let start_instant = time::Instant::now();
+    if command.execute(&path, followup_input) {
+        let exe_duration = start_instant.elapsed();
+        if command.need_wrapup() {
+            utils::slog(command.wrapup_msg());
         }
 
-        return (name, color_text_len)
+        utils::slog(format!("That took {}.{}s", exe_duration.as_secs(), exe_duration.subsec_millis()));
+    } else {
+        utils::elog(":(\n");
+    }
+}
+
+fn initial_greeting(path: &String, path_exists: bool) -> String {
+    if path_exists {
+        format!("What would you like to do to {}?\n",
+                utils::color_text(path, Color::Yellow))
+    } else {
+        format!("{} doesn't exists yet, what's next?\n",
+                utils::color_text(path, Color::Yellow))
     }
 
-    fn matches_hotkey(&self, key: char) -> bool {
-        let hotkey = self.name().chars().nth(self.hotkey_pos()).unwrap();
-        return key.to_ascii_uppercase() == hotkey || key.to_ascii_lowercase() == hotkey
+}
+
+fn commands_to_show(path_exists: bool) -> Vec<Box<Command>> {
+    Vec::from_iter(
+        commands::all_commands()
+            .into_iter()
+            .filter(|c| {
+                path_exists && c.should_show_if_path_exists() ||
+                    !path_exists && c.should_show_if_path_exists_not()
+            })
+        )
+}
+
+fn user_select_from_menu(commands: &Vec<Box<Command>>) -> char {
+    let (initial_menu, replacement) = create_initial_menu(&commands);
+    print!("{}", initial_menu);
+    io::stdout().flush().expect("Flushing failed");
+
+    let selection = char::from(getch::Getch::new().getch().unwrap());
+    print!("{}", replacement);
+    io::stdout().flush().expect("Flushing failed");
+    return selection
+}
+
+pub fn run_mmm(path: &String) {
+    let path_exists = Path::new(path).exists();
+
+    utils::log(initial_greeting(path, path_exists));
+
+    let commands = commands_to_show(path_exists);
+    let user_input = user_select_from_menu(&commands);
+    for command in commands {
+        if command.matches_hotkey(user_input) {
+            run_command(command, &path);
+            return
+        }
     }
+
+    utils::slog("No action chosen. Bye!\n");
 }

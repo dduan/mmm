@@ -1,6 +1,6 @@
-use crate::mmm::Command;
 use std::env;
 use std::process;
+use super::Command;
 
 pub struct EditCommand {
     editor: Option<String>

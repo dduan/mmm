@@ -1,5 +1,5 @@
-use crate::mmm::Command;
 use open;
+use super::Command;
 
 pub struct OpenCommand {}
 

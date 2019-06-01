@@ -1,7 +1,7 @@
-use crate::mmm::Command;
-use crate::mmm::utils;
 use std::fs::File;
 use std::path::Path;
+use super::Command;
+use super::utils;
 
 pub struct TouchCommand {}
 
