@@ -4,8 +4,8 @@ use std::env;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    if args.len() < 2 {
-        println!("Usage: {} PATH", args[0]);
+    if args.len() < 2 || args[1] == "-h" || args[1] == "--help" {
+        mmm::print_help();
         return;
     }
 

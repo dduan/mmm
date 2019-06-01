@@ -113,3 +113,16 @@ pub fn run_mmm(path: &String) {
 pub fn print_version() {
     println!("{}", env!("CARGO_PKG_VERSION"));
 }
+
+pub fn print_help() {
+    print!("mmm {}
+A little interactive file system manipulator.
+
+USAGE:
+    mmm PATH_TO_MANIPULATE
+    mmm -h, --help         Print this message.
+    mmm -v, --version      Print version.
+
+https://twitter.com/daniel_duan",
+    env!("CARGO_PKG_VERSION"));
+}
