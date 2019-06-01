@@ -9,5 +9,10 @@ fn main() {
         return;
     }
 
+    if args[1] == "-v" || args[1] == "--version" {
+        mmm::print_version();
+        return;
+    }
+
     mmm::run_mmm(&args[1])
 }

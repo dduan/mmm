@@ -109,3 +109,7 @@ pub fn run_mmm(path: &String) {
 
     utils::slog("No action chosen. Bye!\n");
 }
+
+pub fn print_version() {
+    println!("{}", env!("CARGO_PKG_VERSION"));
+}
