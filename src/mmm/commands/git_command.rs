@@ -54,7 +54,7 @@ impl Command for GitCommand {
     }
 
     fn should_show_if_path_exists(&self) -> bool { self.in_git }
-    fn should_show_if_path_exists_not(&self) -> bool { self.in_git }
+    fn should_show_if_path_exists_not(&self) -> bool { false }
 
     fn need_followup(&self) -> bool { true }
     fn followup_prompt(&self, path: &String) -> Buffer {
