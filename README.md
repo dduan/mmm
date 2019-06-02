@@ -8,7 +8,7 @@ Supports Unix and Windows PowerShell!
 
 ## Install
 
-macOS
+macOS Homebrew/Linuxbrew
 
 ```
 brew install dduan/formulae/mmm
