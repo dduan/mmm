@@ -60,7 +60,7 @@ impl Command for GitCommand {
     fn followup_prompt(&self, path: &String) -> Buffer {
         let mut buffer = BufferWriter::stdout(ColorChoice::Auto).buffer();
 
-        write!(&mut buffer, "[mmm] `git ").expect("Buffer write error");
+        write!(&mut buffer, "`git ").expect("Buffer write error");
         utils::write(&mut buffer, ".", Color::Yellow);
         write!(&mut buffer, " {}`\n           ", path).expect("Buffer write error");
         utils::write(&mut buffer, "└", Color::Yellow);
