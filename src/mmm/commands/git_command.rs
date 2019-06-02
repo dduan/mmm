@@ -1,7 +1,13 @@
-use colored::Color;
 use std::process;
+use std::io::Write;
 use super::Command;
 use super::utils;
+use termcolor::{
+    Buffer,
+    BufferWriter,
+    Color,
+    ColorChoice,
+};
 
 pub struct GitCommand {
     in_git: bool
@@ -51,11 +57,16 @@ impl Command for GitCommand {
     fn should_show_if_path_exists_not(&self) -> bool { self.in_git }
 
     fn need_followup(&self) -> bool { true }
-    fn followup_prompt(&self, path: &String) -> String {
-        format!("`git {} {}`\n           {} ",
-                utils::color_text(".", Color::Yellow),
-                path,
-                utils::color_text("└", Color::Yellow))
+    fn followup_prompt(&self, path: &String) -> Buffer {
+        let mut buffer = BufferWriter::stdout(ColorChoice::Auto).buffer();
+
+        write!(&mut buffer, "[mmm] `git ").expect("Buffer write error");
+        utils::write(&mut buffer, ".", Color::Yellow);
+        write!(&mut buffer, " {}`\n           ", path).expect("Buffer write error");
+        utils::write(&mut buffer, "└", Color::Yellow);
+        write!(&mut buffer, " ").expect("Buffer write error");
+
+        buffer
     }
 
     fn execute(&self, path: &String, followup_input: Option<String>) -> bool {
@@ -66,7 +77,12 @@ impl Command for GitCommand {
         }
 
         let whole_command = format!("git {} {}", subcommand, path);
-        utils::log(format!("Running `{}`\n", utils::color_text(whole_command, Color::Yellow)));
+        let stdout = BufferWriter::stdout(ColorChoice::Auto);
+        let mut buffer = stdout.buffer();
+        write!(&mut buffer, "[mmm] Running `").expect("Buffer write failure");
+        utils::write(&mut buffer, whole_command, Color::Yellow);
+        write!(&mut buffer, "`\n").expect("Buffer write failure");
+        stdout.print(&buffer).expect("Stdout print failure");
 
         run_git(subcommand, path.to_string())
     }

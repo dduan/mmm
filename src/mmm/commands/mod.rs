@@ -1,5 +1,11 @@
-use colored::Color;
 use super::utils;
+use std::io::Write;
+use termcolor::{
+    Buffer,
+    BufferWriter,
+    Color,
+    ColorChoice,
+};
 
 pub trait Command {
     fn new() -> Self where Self: Sized;
@@ -10,7 +16,9 @@ pub trait Command {
     fn exe_msg(&self, path: &String) -> Option<String>;
     fn need_followup(&self) -> bool { false }
     #[allow(unused_variables)]
-    fn followup_prompt(&self, path: &String) -> String { String::from("") }
+    fn followup_prompt(&self, path: &String) -> Buffer {
+        BufferWriter::stdout(ColorChoice::Auto).buffer()
+    }
 
     fn need_wrapup(&self) -> bool { true }
     #[allow(unused_variables)]
@@ -21,25 +29,31 @@ pub trait Command {
 
     fn execute(&self, path: &String, followup_input: Option<String>) -> bool;
 
-    fn display_text(&self) -> (String, usize) {
+    fn display_text(&self) -> (Buffer, usize) {
         let mut name = self.name();
-        let pos = self.hotkey_pos();
-
-        let key_char = name.chars().nth(pos).unwrap();
-        let indicator = format!("[{}]", utils::color_text(key_char, Color::Red));
-        let color_text_len = indicator.len() - 3;
-
-        name.replace_range(pos..pos+1, &indicator);
         if self.need_followup() {
             name.push('…');
         }
+        let name_len = name.len() + 2;
 
-        return (name, color_text_len)
+        let pos = self.hotkey_pos();
+        let key = name.chars().nth(pos).unwrap();
+
+        let mut name_tail: String = name.split_off(pos);
+        let _ = name_tail.remove(0);
+
+        let mut buffer = BufferWriter::stdout(ColorChoice::Auto).buffer();
+
+        write!(&mut buffer, "{}[", name).expect("Buffer write failure");
+        utils::write(&mut buffer, key, Color::Red);
+        write!(&mut buffer, "]{}", name_tail).expect("Buffer write failure");
+
+        (buffer, name_len)
     }
 
     fn matches_hotkey(&self, key: char) -> bool {
         let hotkey = self.name().chars().nth(self.hotkey_pos()).unwrap();
-        return key.to_ascii_uppercase() == hotkey || key.to_ascii_lowercase() == hotkey
+        key.to_ascii_uppercase() == hotkey || key.to_ascii_lowercase() == hotkey
     }
 }
 

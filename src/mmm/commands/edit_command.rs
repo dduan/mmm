@@ -21,8 +21,6 @@ impl Command for EditCommand {
     fn exe_msg(&self, path: &String) -> Option<String> { Some(format!("{} {}\n", "Editing", path)) }
 
     #[allow(unused_variables)]
-
-    #[allow(unused_variables)]
     fn execute(&self, path: &String, followup_input: Option<String>) -> bool {
         let mut editor_command = process::Command::new(format!("{}", self.editor.as_ref().unwrap()));
         editor_command.arg(path);
