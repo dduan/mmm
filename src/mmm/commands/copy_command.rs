@@ -1,16 +1,27 @@
-use colored::Color;
 use fs_extra::dir;
 use fs_extra::file;
 use std::fmt::Display;
+use std::io::Write;
 use std::path::Path;
 use super::Command;
 use super::utils;
+use termcolor::{
+    Buffer,
+    BufferWriter,
+    Color,
+    ColorChoice,
+};
 
 pub struct CopyCommand {}
 
 impl CopyCommand {
     fn log_copy_attempt<T>(&self, msg: T) where T: Display {
-        utils::log(format!("Copying to {}\n", utils::color_text(msg, Color::Yellow)));
+        let stdout = BufferWriter::stdout(ColorChoice::Auto);
+        let mut buffer = stdout.buffer();
+        write!(buffer, "[mmm] Copying to  ").expect("Buffer write failure");
+        utils::write(&mut buffer, msg, Color::Yellow);
+        stdout.print(&buffer).expect("Stdout print error");
+        print!("\n")
     }
 
     fn copy(&self, from: String, to: String) -> bool {
@@ -37,9 +48,11 @@ impl Command for CopyCommand {
 
     fn need_followup(&self) -> bool { true }
     #[allow(unused_variables)]
-    fn followup_prompt(&self, path: &String) -> String {
+    fn followup_prompt(&self, path: &String) -> Buffer {
+        let mut buffer = BufferWriter::stdout(ColorChoice::Auto).buffer();
         // TODO: can we prefill the answer with `path`, since usually it's related?
-        String::from("Where to? ")
+        write!(&mut buffer, "Where to?  ").expect("Buffer write failure");
+        buffer
     }
 
     #[allow(unused_variables)]

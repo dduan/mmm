@@ -6,7 +6,7 @@ edition = "2018"
 
 [dependencies]
 atty = "0.2"
-colored = "1.8"
+termcolor = "1.0"
 fs_extra = "1.1"
 getch = "0.2.1"
 open = "1"

@@ -1,8 +1,14 @@
-use colored::Color;
 use std::fs;
+use std::io::Write;
 use std::path::Path;
 use super::Command;
 use super::utils;
+use termcolor::{
+    Buffer,
+    BufferWriter,
+    Color,
+    ColorChoice,
+};
 
 pub struct DeleteCommand {}
 
@@ -24,8 +30,12 @@ impl Command for DeleteCommand {
     fn need_followup(&self) -> bool { true }
 
     #[allow(unused_variables)]
-    fn followup_prompt(&self, path: &String) -> String {
-        format!("Are you {}? (y/N) ", utils::color_text("sure", Color::Red))
+    fn followup_prompt(&self, path: &String) -> Buffer {
+        let mut buffer = BufferWriter::stdout(ColorChoice::Auto).buffer();
+        write!(&mut buffer, "Are you ").expect("Buffer write erroc");
+        utils::write(&mut buffer, "sure", Color::Red);
+        write!(&mut buffer, "? (y/N) ").expect("Buffer write error");
+        buffer
     }
 
     fn need_wrapup(&self) -> bool { false }

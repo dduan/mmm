@@ -9,28 +9,12 @@ use std::io::Write;
 use std::io;
 use std::path::Path;
 use std::time;
-use colored::Color;
-
-/// Returns content of the menu and the next line to display after an item is selected from the
-/// menu.
-fn create_initial_menu(commands: &Vec<Box<Command>>) -> (String, String) {
-    let display = commands
-        .iter()
-        .map(|c| c.display_text());
-
-    // TODO: can we get away with no clone?
-    let color_text_count: usize = display.clone().map(|t| t.1).sum();
-    let items: Vec<String> = display.map(|t| t.0).collect();
-    let initial_text = items.join(" | ");
-
-    let replace_text: String;
-    if atty::is(atty::Stream::Stdout) {
-        replace_text = format!("\r{}\r", " ".repeat(initial_text.len() - color_text_count));
-    } else {
-        replace_text = format!("\n");
-    }
-    return (initial_text, replace_text)
-}
+use termcolor::{
+    Buffer,
+    BufferWriter,
+    Color,
+    ColorChoice,
+};
 
 fn run_command(command: Box<Command>, path: &String) {
     let message = command.exe_msg(&path);
@@ -40,8 +24,9 @@ fn run_command(command: Box<Command>, path: &String) {
 
     let mut followup_input = None;
     if command.need_followup() {
-        let followup_message = command.followup_prompt(&path);
-        utils::log(followup_message);
+        print!("[mmm] ");
+        BufferWriter::stdout(ColorChoice::Auto).print(&command.followup_prompt(&path)).unwrap();
+        io::stdout().flush().expect("Stdout flush error");
         let mut buf = String::new();
         io::stdin().read_line(&mut buf).expect("");
         followup_input = Some(buf);
@@ -60,15 +45,15 @@ fn run_command(command: Box<Command>, path: &String) {
     }
 }
 
-fn initial_greeting(path: &String, path_exists: bool) -> String {
+fn initial_greeting(buffer: &mut Buffer, path: &String, path_exists: bool) {
     if path_exists {
-        format!("What would you like to do to {}?\n",
-                utils::color_text(path, Color::Yellow))
+        write!(buffer, "What would you like to do to ").expect("Buffer write error");
+        utils::write(buffer, path, Color::Yellow);
+        write!(buffer, "?\n").expect("Buffer write error");
     } else {
-        format!("{} doesn't exists yet, what's next?\n",
-                utils::color_text(path, Color::Yellow))
+        utils::write(buffer, path, Color::Yellow);
+        write!(buffer, " doesn't exists yet, what's next?\n").expect("Buffer write error");
     }
-
 }
 
 fn commands_to_show(path_exists: bool) -> Vec<Box<Command>> {
@@ -83,20 +68,39 @@ fn commands_to_show(path_exists: bool) -> Vec<Box<Command>> {
 }
 
 fn user_select_from_menu(commands: &Vec<Box<Command>>) -> char {
-    let (initial_menu, replacement) = create_initial_menu(&commands);
-    print!("{}", initial_menu);
-    io::stdout().flush().expect("Flushing failed");
+    let display = commands
+        .iter()
+        .map(|c| c.display_text());
+
+    // TODO: can we get away with no clone?
+    let uncolored_text_count: usize = display.clone().map(|t| t.1 + 3).sum();
+    let items: Vec<Buffer> = display.map(|t| t.0).collect();
+
+    let stdout = BufferWriter::stdout(ColorChoice::Auto);
+    for item in items {
+        stdout.print(&item).expect("Stdout print error");
+        print!(" | ");
+    }
+    std::io::stdout().flush().unwrap();
 
     let selection = char::from(getch::Getch::new().getch().unwrap());
-    print!("{}", replacement);
-    io::stdout().flush().expect("Flushing failed");
+
+    if atty::is(atty::Stream::Stdout) {
+        print!("\r{}\r", " ".repeat(uncolored_text_count));
+    } else {
+        print!("\n");
+    }
+
     return selection
 }
 
 pub fn run_mmm(path: &String) {
     let path_exists = Path::new(path).exists();
-
-    utils::log(initial_greeting(path, path_exists));
+    let stdout = BufferWriter::stdout(ColorChoice::Auto);
+    let mut out_buffer = stdout.buffer();
+    print!("[mmm] ");
+    initial_greeting(&mut out_buffer, path, path_exists);
+    stdout.print(&out_buffer).expect("Stdout print error");
 
     let commands = commands_to_show(path_exists);
     let user_input = user_select_from_menu(&commands);
