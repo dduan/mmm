@@ -1,3 +1,7 @@
 # Miniature Menu Manipulator
 
-… this name is subject to change, the initials are not.
+A interactive CLI helper for manipulating files.
+
+![Demo](demo.gif)
+
+Supports Unix and Windows PowerShell!
