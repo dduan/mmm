@@ -18,7 +18,7 @@ impl CopyCommand {
     fn log_copy_attempt<T>(&self, msg: T) where T: Display {
         let stdout = BufferWriter::stdout(ColorChoice::Auto);
         let mut buffer = stdout.buffer();
-        write!(buffer, "[mmm] Copying to  ").expect("Buffer write failure");
+        write!(buffer, "[mmm] Copying to ").expect("Buffer write failure");
         utils::write(&mut buffer, msg, Color::Yellow);
         stdout.print(&buffer).expect("Stdout print error");
         print!("\n")
@@ -41,7 +41,7 @@ impl Command for CopyCommand {
     fn name(&self) -> String { String::from("Copy") }
     fn hotkey_pos(&self) -> usize { 0 }
     fn exe_msg(&self, path: &String) -> Option<String> {
-        Some(format!("{} {}\n", "Copying  ", path))
+        Some(format!("{} {}\n", "Copying   ", path))
     }
 
     fn should_show_if_path_exists_not(&self) -> bool { false }
