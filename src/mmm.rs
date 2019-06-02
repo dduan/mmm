@@ -39,7 +39,7 @@ fn run_command(command: Box<Command>, path: &String) {
             utils::slog(command.wrapup_msg());
         }
 
-        utils::slog(format!("That took {}.{}s", exe_duration.as_secs(), exe_duration.subsec_millis()));
+        utils::slog(format!("That took {}.{}s\n", exe_duration.as_secs(), exe_duration.subsec_millis()));
     } else {
         utils::elog(":(\n");
     }
@@ -119,7 +119,7 @@ pub fn print_version() {
 }
 
 pub fn print_help() {
-    print!("mmm {}
+    println!("mmm {}
 A little interactive file system manipulator.
 
 USAGE:
