@@ -17,8 +17,9 @@ impl MoveCommand {
     fn log_move_attempt<T>(&self, msg: T) where T: Display {
         let stdout = BufferWriter::stdout(ColorChoice::Auto);
         let mut buffer = stdout.buffer();
-        writeln!(buffer, "Moving to ").expect("Buffer write error");
+        write!(buffer, "Moving to ").expect("Buffer write error");
         utils::write(&mut buffer, msg, Color::Yellow);
+        write!(buffer, "\n").expect("Buffer write error");
         stdout.print(&buffer).expect("Stdout print error");
     }
 }
